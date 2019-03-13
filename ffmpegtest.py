@@ -1,7 +1,6 @@
-import ffmpeg
+import time, sys, click, ffmpeg
 from PIL import Image
 from os import system
-import time, sys
 
 toWait = 0
 def parseFrames(inputVid):
@@ -103,7 +102,13 @@ def displayImage():
 def clearTerm():
     sys.stdout.write("\033c")
 
-system("rm -rf ./Frames/im*")
-parseFrames("in_card.mp4")
-displayImage()
+@click.command()
+@click.argument('videofile')
+def main(videofile):
+    system("rm -rf ./Frames/im*")
+    parseFrames(videofile)
+    displayImage()
+    system("rm -rf ./Frames/im*")
 
+if __name__ == "__main__":
+    main()
