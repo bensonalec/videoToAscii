@@ -3,7 +3,7 @@ from PIL import Image
 from os import system
 
 toWait = 0
-def parseFrames(inputVid):
+def parseFrames(inputVid, scaler):
     probe = ffmpeg.probe(inputVid)
     video_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'video'), None)
     width = int(video_stream['width'])
@@ -22,7 +22,7 @@ def parseFrames(inputVid):
         (
             ffmpeg
             .input(inputVid, ss=total)
-            .filter('scale', width/8, -1)
+            .filter('scale', width/int(scaler), -1)
             .output(im, vframes=1)
             .run()
         )
@@ -104,9 +104,10 @@ def clearTerm():
 
 @click.command()
 @click.argument('videofile')
-def main(videofile):
+@click.argument('scaler')
+def main(videofile, scaler):
     system("rm -rf ./Frames/im*")
-    parseFrames(videofile)
+    parseFrames(videofile,scaler)
     displayImage()
     system("rm -rf ./Frames/im*")
 
